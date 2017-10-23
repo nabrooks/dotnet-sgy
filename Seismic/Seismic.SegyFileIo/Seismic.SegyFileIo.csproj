@@ -40,10 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinaryHeader.cs" />
     <Compile Include="Exceptions\SegyEndianessException.cs" />
     <Compile Include="FormatCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SegyFileHeader.cs" />
     <Compile Include="SegyReader.cs" />
     <Compile Include="SegyTrace.cs" />
     <Compile Include="SegyTraceHeader.cs" />

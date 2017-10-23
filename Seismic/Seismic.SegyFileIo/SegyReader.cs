@@ -8,22 +8,23 @@ using System.Threading.Tasks;
 using Utility;
 using Utility.DataTypes;
 using Utility.Io;
+using Utility.Io.Encodings;
 using Utility.Io.Serialization;
 using Utility.Serialization;
 
 namespace Seismic.SegyFileIo
 {
     /// <summary>
-    /// Opens a stream for reading data and file headers to a Society of Exploration Geophysicists "Y" file format.
+    /// Opens a stream for reading data and file headers to a Society of Exploration Geophysicists "Y" (Segy) file format.
     /// </summary>
-    public class SgyReader : Disposable
+    public class SegyReader : Disposable
     {
         private readonly string _filepath;
         private readonly FileStream _stream;
         private readonly Encoding _textHeaderEncoding = EbcdicEncoding.GetEncoding("EBCDIC-US");
         private readonly BinaryReader _reader;
 
-        #region Const
+        #region Constant values
 
         public const int TextHeaderBytesCount = 3200;
         public const int BinaryHeaderBytesCount = 400;
@@ -31,19 +32,19 @@ namespace Seismic.SegyFileIo
         public const int SampleFormatIndex = 24;
         public const int SampleCountIndex = 114;
 
-        #endregion Const
+        #endregion Constant values
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="fileInfo">File Info for the file to read</param>
-        public SgyReader(FileInfo fileInfo) : this(fileInfo.FullName) { }
+        public SegyReader(FileInfo fileInfo) : this(fileInfo.FullName) { }
 
         /// <summary>
         /// Ctor
         /// </summary>
         /// <param name="filepath">The path string of the file</param>
-        public SgyReader(string filepath)
+        public SegyReader(string filepath)
         {
             CodeContract.Requires(!string.IsNullOrEmpty(filepath));
             CodeContract.Requires<FileNotFoundException>(File.Exists(filepath), $"File {filepath} was not found.");
@@ -74,7 +75,7 @@ namespace Seismic.SegyFileIo
             //
             _reader.BaseStream.Seek(TextHeaderBytesCount, SeekOrigin.Begin);
             byte[] binaryHeaderBytes = _reader.ReadBytes(BinaryHeaderBytesCount);
-            FileBinaryHeader = BinaryHeader.From(binaryHeaderBytes, IsLittleEndian);
+            FileBinaryHeader = SegyFileHeader.From(binaryHeaderBytes, IsLittleEndian);
             FileBinaryHeaderBytes = binaryHeaderBytes;
 
             //
@@ -134,9 +135,9 @@ namespace Seismic.SegyFileIo
         public long TraceCount { get; }
 
         /// <summary>
-        /// Attempts to infer the endianess of the binary serializer used when writing the file.
+        /// Attempts to infer the endianess of the binary reader used when reading the file
         /// via format code value inferred from both big and little endianess. if the format code value
-        /// deserialized via little endian deserialization is an acceptable value (1-8), then returns 
+        /// deserialized via little endian deserialization is an acceptable value (1-8), then returns true, else false
         /// </summary>
         /// <returns>
         /// false if the format code value deserialized via big endian deserialization is either 1-8 or 0.
@@ -148,7 +149,7 @@ namespace Seismic.SegyFileIo
         /// Reads the binary file header of the Segy file
         /// </summary>
         /// <returns>The binary header</returns>
-        public BinaryHeader FileBinaryHeader { get; }
+        public SegyFileHeader FileBinaryHeader { get; }
 
         /// <summary>
         /// The bytes read from the file that represent the binary file header

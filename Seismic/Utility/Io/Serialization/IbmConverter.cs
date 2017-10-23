@@ -123,7 +123,8 @@ namespace Utility.Serialization
         public static byte[] GetBytes(short value)
         {
             var b = BitConverter.GetBytes(value);
-            return new[] { b[1], b[0] };
+            Array.Reverse(b);
+            return b;
         }
 
         #endregion

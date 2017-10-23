@@ -55,95 +55,99 @@ namespace Seismic.SegyFileIo
             CdpNum = crossline;
         }
 
-        protected SegyTraceHeader(SegyTraceHeader traceHdr)
+        /// <summary>
+        /// Copy constructor for "deep" object copies
+        /// </summary>
+        /// <param name="traceHeader">the trace header to copy</param>
+        protected SegyTraceHeader(SegyTraceHeader traceHeader)
         {
-            TraceNumInLine = traceHdr.TraceNumInLine;
-            TraceNumInFile = traceHdr.TraceNumInFile;
-            ShotNumOrStackTraceNum = traceHdr.ShotNumOrStackTraceNum;
-            TraceNumInShot = traceHdr.TraceNumInShot;
-            EnergySourcePtNum = traceHdr.EnergySourcePtNum;
-            CdpNum = traceHdr.CdpNum;
-            TraceNumber = traceHdr.TraceNumber;
-            TraceId = traceHdr.TraceId;
-            NumVerticalStackedTraces = traceHdr.NumVerticalStackedTraces;
-            CdpFold = traceHdr.CdpFold;
-            DataUse = traceHdr.DataUse;
-            SourceReceiverDistance = traceHdr.SourceReceiverDistance;
-            RecieverGroupElevation = traceHdr.RecieverGroupElevation;
-            SurfaceElevationAtSource = traceHdr.SurfaceElevationAtSource;
-            SourceDepthBelowSurf = traceHdr.SourceDepthBelowSurf;
-            DatumElevAtRecieverGroup = traceHdr.DatumElevAtRecieverGroup;
-            DatumElevationAtSource = traceHdr.DatumElevationAtSource;
-            WaterDepthAtSource = traceHdr.WaterDepthAtSource;
-            WaterDepthAtRecieverGroup = traceHdr.WaterDepthAtRecieverGroup;
-            ScalarForElevationAndDepth = traceHdr.ScalarForElevationAndDepth;
-            ScalarForCoordinates = traceHdr.ScalarForCoordinates;
-            XSourceCoordinate = traceHdr.XSourceCoordinate;
-            YSourceCoordinate = traceHdr.YSourceCoordinate;
-            XRecieverGroupCoordinate = traceHdr.XRecieverGroupCoordinate;
-            YRecieverGroupCoordinate = traceHdr.YRecieverGroupCoordinate;
-            CoordinateUnit = traceHdr.CoordinateUnit;
-            WeatheringVelocity = traceHdr.WeatheringVelocity;
-            SubweatheringVelocity = traceHdr.SubweatheringVelocity;
-            UpholeTimeAtSource = traceHdr.UpholeTimeAtSource;
-            UpholeTimeAtReceiverGroup = traceHdr.UpholeTimeAtReceiverGroup;
-            SourceStaticCorrection = traceHdr.SourceStaticCorrection;
-            ReceiverGroupStaticCorrection = traceHdr.ReceiverGroupStaticCorrection;
-            TotalStaticApplied = traceHdr.TotalStaticApplied;
-            HeaderTimeBreakLagMs = traceHdr.HeaderTimeBreakLagMs;
-            TimeBreakShotLagMs = traceHdr.TimeBreakShotLagMs;
-            ShotRecordingLag = traceHdr.ShotRecordingLag;
-            MuteTimeStart = traceHdr.MuteTimeStart;
-            MuteTimeEnd = traceHdr.MuteTimeEnd;
-            SampleCount = traceHdr.SampleCount;
-            SampleIntervalMs = traceHdr.SampleIntervalMs;
-            GainType = traceHdr.GainType;
-            GainConst = traceHdr.GainConst;
-            EarlyGainDb = traceHdr.EarlyGainDb;
-            Correlated = traceHdr.Correlated;
-            SweepFrequencyStart = traceHdr.SweepFrequencyStart;
-            SweepFrequencyEnd = traceHdr.SweepFrequencyEnd;
-            SweepLengthMs = traceHdr.SweepLengthMs;
-            SweepType = traceHdr.SweepType;
-            SweepTaperTraceLengthStartMs = traceHdr.SweepTaperTraceLengthStartMs;
-            SweepTaperTraceLengthEndMs = traceHdr.SweepTaperTraceLengthEndMs;
-            TaperType = traceHdr.TaperType;
-            AliasFilterFrequency = traceHdr.AliasFilterFrequency;
-            AliasFilterSlope = traceHdr.AliasFilterSlope;
-            NotchFilterFrequency = traceHdr.NotchFilterFrequency;
-            NotchFilterSlope = traceHdr.NotchFilterSlope;
-            LowCutFrequency = traceHdr.LowCutFrequency;
-            HighCutFrequency = traceHdr.HighCutFrequency;
-            LowCutSlope = traceHdr.LowCutSlope;
-            HighCutSlope = traceHdr.HighCutSlope;
-            Yr = traceHdr.Yr;
-            Day = traceHdr.Day;
-            Hour = traceHdr.Hour;
-            Minute = traceHdr.Minute;
-            Second = traceHdr.Second;
-            TimeBasis = traceHdr.TimeBasis;
-            TraceWeightFactor = traceHdr.TraceWeightFactor;
-            GeophoneGroupNumOfRollSwitchPositionOne = traceHdr.GeophoneGroupNumOfRollSwitchPositionOne;
-            GeophoneGroupNumOfFirstTraceOrigRecord = traceHdr.GeophoneGroupNumOfFirstTraceOrigRecord;
-            GeophoneGroupNumOfLastTraceOrigRecord = traceHdr.GeophoneGroupNumOfLastTraceOrigRecord;
-            GapSize = traceHdr.GapSize;
-            TaperOverTravel = traceHdr.TaperOverTravel;
-            Local1 = traceHdr.Local1;
-            Local2 = traceHdr.Local2;
-            Local3 = traceHdr.Local3;
-            Local4 = traceHdr.Local4;
-            Local5 = traceHdr.Local5;
-            Local6 = traceHdr.Local6;
-            NumTr = traceHdr.NumTr;
-            Mark = traceHdr.Mark;
-            ShortPad = traceHdr.ShortPad;
-            Local7 = traceHdr.Local7;
-            Local8 = traceHdr.Local8;
-            Local9 = traceHdr.Local9;
-            Local10 = traceHdr.Local10;
-            Local11 = traceHdr.Local11;
-            Local12 = traceHdr.Local12;
-            Local13 = traceHdr.Local13;
+            TraceNumInLine = traceHeader.TraceNumInLine;
+            TraceNumInFile = traceHeader.TraceNumInFile;
+            ShotNumOrStackTraceNum = traceHeader.ShotNumOrStackTraceNum;
+            TraceNumInShot = traceHeader.TraceNumInShot;
+            EnergySourcePtNum = traceHeader.EnergySourcePtNum;
+            CdpNum = traceHeader.CdpNum;
+            TraceNumber = traceHeader.TraceNumber;
+            TraceId = traceHeader.TraceId;
+            NumVerticalStackedTraces = traceHeader.NumVerticalStackedTraces;
+            CdpFold = traceHeader.CdpFold;
+            DataUse = traceHeader.DataUse;
+            SourceReceiverDistance = traceHeader.SourceReceiverDistance;
+            RecieverGroupElevation = traceHeader.RecieverGroupElevation;
+            SurfaceElevationAtSource = traceHeader.SurfaceElevationAtSource;
+            SourceDepthBelowSurf = traceHeader.SourceDepthBelowSurf;
+            DatumElevAtRecieverGroup = traceHeader.DatumElevAtRecieverGroup;
+            DatumElevationAtSource = traceHeader.DatumElevationAtSource;
+            WaterDepthAtSource = traceHeader.WaterDepthAtSource;
+            WaterDepthAtRecieverGroup = traceHeader.WaterDepthAtRecieverGroup;
+            ScalarForElevationAndDepth = traceHeader.ScalarForElevationAndDepth;
+            ScalarForCoordinates = traceHeader.ScalarForCoordinates;
+            XSourceCoordinate = traceHeader.XSourceCoordinate;
+            YSourceCoordinate = traceHeader.YSourceCoordinate;
+            XRecieverGroupCoordinate = traceHeader.XRecieverGroupCoordinate;
+            YRecieverGroupCoordinate = traceHeader.YRecieverGroupCoordinate;
+            CoordinateUnit = traceHeader.CoordinateUnit;
+            WeatheringVelocity = traceHeader.WeatheringVelocity;
+            SubweatheringVelocity = traceHeader.SubweatheringVelocity;
+            UpholeTimeAtSource = traceHeader.UpholeTimeAtSource;
+            UpholeTimeAtReceiverGroup = traceHeader.UpholeTimeAtReceiverGroup;
+            SourceStaticCorrection = traceHeader.SourceStaticCorrection;
+            ReceiverGroupStaticCorrection = traceHeader.ReceiverGroupStaticCorrection;
+            TotalStaticApplied = traceHeader.TotalStaticApplied;
+            HeaderTimeBreakLagMs = traceHeader.HeaderTimeBreakLagMs;
+            TimeBreakShotLagMs = traceHeader.TimeBreakShotLagMs;
+            ShotRecordingLag = traceHeader.ShotRecordingLag;
+            MuteTimeStart = traceHeader.MuteTimeStart;
+            MuteTimeEnd = traceHeader.MuteTimeEnd;
+            SampleCount = traceHeader.SampleCount;
+            SampleIntervalMs = traceHeader.SampleIntervalMs;
+            GainType = traceHeader.GainType;
+            GainConst = traceHeader.GainConst;
+            EarlyGainDb = traceHeader.EarlyGainDb;
+            Correlated = traceHeader.Correlated;
+            SweepFrequencyStart = traceHeader.SweepFrequencyStart;
+            SweepFrequencyEnd = traceHeader.SweepFrequencyEnd;
+            SweepLengthMs = traceHeader.SweepLengthMs;
+            SweepType = traceHeader.SweepType;
+            SweepTaperTraceLengthStartMs = traceHeader.SweepTaperTraceLengthStartMs;
+            SweepTaperTraceLengthEndMs = traceHeader.SweepTaperTraceLengthEndMs;
+            TaperType = traceHeader.TaperType;
+            AliasFilterFrequency = traceHeader.AliasFilterFrequency;
+            AliasFilterSlope = traceHeader.AliasFilterSlope;
+            NotchFilterFrequency = traceHeader.NotchFilterFrequency;
+            NotchFilterSlope = traceHeader.NotchFilterSlope;
+            LowCutFrequency = traceHeader.LowCutFrequency;
+            HighCutFrequency = traceHeader.HighCutFrequency;
+            LowCutSlope = traceHeader.LowCutSlope;
+            HighCutSlope = traceHeader.HighCutSlope;
+            Yr = traceHeader.Yr;
+            Day = traceHeader.Day;
+            Hour = traceHeader.Hour;
+            Minute = traceHeader.Minute;
+            Second = traceHeader.Second;
+            TimeBasis = traceHeader.TimeBasis;
+            TraceWeightFactor = traceHeader.TraceWeightFactor;
+            GeophoneGroupNumOfRollSwitchPositionOne = traceHeader.GeophoneGroupNumOfRollSwitchPositionOne;
+            GeophoneGroupNumOfFirstTraceOrigRecord = traceHeader.GeophoneGroupNumOfFirstTraceOrigRecord;
+            GeophoneGroupNumOfLastTraceOrigRecord = traceHeader.GeophoneGroupNumOfLastTraceOrigRecord;
+            GapSize = traceHeader.GapSize;
+            TaperOverTravel = traceHeader.TaperOverTravel;
+            Local1 = traceHeader.Local1;
+            Local2 = traceHeader.Local2;
+            Local3 = traceHeader.Local3;
+            Local4 = traceHeader.Local4;
+            Local5 = traceHeader.Local5;
+            Local6 = traceHeader.Local6;
+            NumTr = traceHeader.NumTr;
+            Mark = traceHeader.Mark;
+            ShortPad = traceHeader.ShortPad;
+            Local7 = traceHeader.Local7;
+            Local8 = traceHeader.Local8;
+            Local9 = traceHeader.Local9;
+            Local10 = traceHeader.Local10;
+            Local11 = traceHeader.Local11;
+            Local12 = traceHeader.Local12;
+            Local13 = traceHeader.Local13;
         }
 
         #region Properties
@@ -737,16 +741,13 @@ namespace Seismic.SegyFileIo
 
         }
 
+        public SegyTraceHeader DeepClone() => new SegyTraceHeader(this);
+
         private static void Insert(byte[] into, byte[] from, int startingIndex)
         {
             for (int i = 0; i < from.Length; i++)
                 into[startingIndex + i] = from[i];
         }
 
-        #region IDeepCloneable<SegyTraceHeader> Members
-
-        public SegyTraceHeader DeepClone() => new SegyTraceHeader(this);
-
-        #endregion
     }
 }

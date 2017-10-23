@@ -5,25 +5,24 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Utility;
 using Utility.DataTypes;
 using Utility.Extensions;
-using Utility.Io;
+using Utility.Io.Encodings;
 
 namespace Seismic.SegyFileIo
 {
     /// <summary>
-    /// Opens a file stream for writing data and file headers to a Society of Exploration Geophysicists "Y" file format.
+    /// Opens a file stream for writing data and file headers to a Society of Exploration Geophysicists "Y" (Segy) file format.
     /// </summary>
-    public class SgyWriter : Disposable
+    public class SegyWriter : Disposable
     {
         private readonly string _filepath;
         private readonly FileStream _stream;
         private static readonly Encoding _textHeaderEncoding = EbcdicEncoding.GetEncoding("EBCDIC-US");
         private readonly BinaryWriter _writer;
 
-        #region Const
+        #region Constant values
 
         public const int TextHeaderSize = 3200;
         public const int BinaryHeaderSize = 400;
@@ -31,13 +30,13 @@ namespace Seismic.SegyFileIo
         public const int SampleFormatIndex = 24;
         public const int SampleCountIndex = 114;
 
-        #endregion Const
+        #endregion Constant values
 
         /// <summary>
         /// Ctor    
         /// </summary>
         /// <param name="filepath">The path of the file.</param>
-        public SgyWriter(string filepath)
+        public SegyWriter(string filepath)
         {
             CodeContract.Requires<NullReferenceException>(!string.IsNullOrEmpty(filepath), "Filepath is null.");
 
@@ -54,7 +53,7 @@ namespace Seismic.SegyFileIo
         /// Other Ctor
         /// </summary>
         /// <param name="fileinfo">The FileInfo of the file intended to be written</param>
-        public SgyWriter(FileInfo fileinfo) : this(fileinfo.FullName)
+        public SegyWriter(FileInfo fileinfo) : this(fileinfo.FullName)
         {
             CodeContract.Assume(fileinfo != null, "The file info used to create a new segy file must not be null.");
         }
@@ -92,7 +91,7 @@ namespace Seismic.SegyFileIo
         /// Writes the binary file header.
         /// </summary>
         /// <param name="binaryHeader">The binary file header to write.</param>
-        public void Write(BinaryHeader binaryHeader)
+        public void Write(SegyFileHeader binaryHeader)
         {
             // write binary file header
             binaryHeader.DataSampleFormatCode = (short)FormatCode.IbmFloatingPoint4;
@@ -195,6 +194,10 @@ namespace Seismic.SegyFileIo
             return TextHeaderSize + BinaryHeaderSize + (traceIndex * (TraceHeaderSize + (sizeof(float) * TraceSampleCount)));
         }
 
+        /// <summary>
+        /// Gets the available amount of ram on this machine.
+        /// </summary>
+        /// <returns>A single precision floating point value that represents the available amount of ram in bytes on this machine.</returns>
         private float AvailableRam()
         {
             PerformanceCounter ctr = new PerformanceCounter("Memory", "Available Bytes", true);

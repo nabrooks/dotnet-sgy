@@ -49,11 +49,14 @@
     <Compile Include="Extensions\ArrayExtensions.cs" />
     <Compile Include="Extensions\ContractExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
-    <Compile Include="Io\EbcdicEncoding.cs" />
-    <Compile Include="Io\InvalidEbcdicDataException.cs" />
+    <Compile Include="Io\Encodings\EbcdicEncoding.cs" />
+    <Compile Include="Io\Encodings\InvalidEbcdicDataException.cs" />
     <Compile Include="Io\Serialization\ByteConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Io\Serialization\IbmConverter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Io\Encodings\ebcdic.dat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

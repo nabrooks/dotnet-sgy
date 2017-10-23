@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Seismic.SegyFileIo
 {
+    /// <summary>
+    /// The data format code of a Segy file. Data sample values may be written in any of 7 different encodings.
+    /// This format code is used to describe how the file sample values were written.
+    /// </summary>
     public enum FormatCode : short
     {
         None = 0,

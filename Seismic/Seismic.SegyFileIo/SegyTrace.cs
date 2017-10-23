@@ -1,32 +1,53 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Utility;
 using Utility.Serialization;
 
 namespace Seismic.SegyFileIo
 {
+    /// <summary>
+    /// Describes a trace as read from a Segy file.
+    /// </summary>
     public class SegyTrace : IEquatable<SegyTrace>
     {
+        /// <summary>
+        /// Ctor
+        /// </summary>
         public SegyTrace()
         {
             Header = new SegyTraceHeader();
         }
 
-        public SegyTrace(SegyTraceHeader trHeader, float[] data, int componentAxis = 0)
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="traceHeader">The trace header to use for this trace</param>
+        /// <param name="data">Trace data for this trace</param>
+        /// <param name="componentAxis">The cartesian coordinate direction in which this trace exists</param>
+        public SegyTrace(SegyTraceHeader traceHeader, float[] data, int componentAxis = 0)
         {
-            Header = trHeader;
+            Header = traceHeader;
             Data = data;
             ComponentAxis = componentAxis;
+
+            CodeContract.Assume(data.Length <= ushort.MaxValue,"The length of the data array for this trace must not exceed ushort.MaxValue due to type definitions of the sample count property in the trace header.");
+
+            Header.SampleCount = (ushort)data.Length;
         }
 
+        /// <summary>
+        /// Ctor
+        /// </summary>
+        /// <param name="sampleCount">The number of samples in this trace</param>
         public SegyTrace(ushort sampleCount) : this()
         {
             Header.SampleCount = sampleCount;
             Data = new float[sampleCount];
         }
 
+        /// <summary>
+        /// The trace header describing properties about the trace
+        /// </summary>
         public SegyTraceHeader Header { get; set; }
 
         /// <summary>
@@ -34,8 +55,15 @@ namespace Seismic.SegyFileIo
         /// </summary>
         public int ComponentAxis { get; set; } = 0;
 
+        /// <summary>
+        /// Sample values for this trace
+        /// </summary>
         public float[] Data { get; set; }
 
+        /// <summary>
+        /// Serializes the trace into a byte array.
+        /// </summary>
+        /// <returns>an array of bytes representing both the trace header and data</returns>
         public byte[] GetBytes()
         {
             byte[] headerBytes = Header.GetBytes();
@@ -62,6 +90,11 @@ namespace Seismic.SegyFileIo
             return traceBytes;
         }
 
+        /// <summary>
+        /// Comparison method
+        /// </summary>
+        /// <param name="other">The Segy trace to compare with</param>
+        /// <returns>True if all trace header properties and sample values are the same as this trace, else returns false.</returns>
         public bool Equals(SegyTrace other)
         {
             if (ComponentAxis != other?.ComponentAxis) return false;
