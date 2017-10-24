@@ -52,6 +52,7 @@
     <Compile Include="SegyReaderTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Data\TeapotDome3D\filt_mig_small.sgy" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -64,9 +65,7 @@
       <Name>Utility</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\TeapotDome3D\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
