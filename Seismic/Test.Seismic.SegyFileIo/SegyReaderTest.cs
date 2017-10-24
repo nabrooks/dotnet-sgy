@@ -10,7 +10,7 @@ namespace Test.Seismic.SegyFileIo
     [TestClass]
     public class SegyReaderTest
     {
-        static FileInfo teapotDome3DFileInfo = new FileInfo(@"..\..\Data\TeapotDome3D\filt_mig.sgy");
+        static FileInfo teapotDome3DFileInfo = new FileInfo(@"..\..\Data\TeapotDome3D\filt_mig_small.sgy");
 
         [TestMethod]
         public void ReadTeapotDome3D()
