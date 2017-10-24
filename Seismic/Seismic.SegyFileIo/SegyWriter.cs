@@ -74,14 +74,22 @@ namespace Seismic.SegyFileIo
         /// <param name="textualFileHeader">The string to write.</param>
         public void Write(string textualFileHeader)
         {
-            CodeContract.Requires<NullReferenceException>(textualFileHeader != null,"The file textual header string must not be null if intended to be written.");
-
-            // pad or remove characters from string if it is not the correct size.
-            string textheader = string.Empty;
-            if (textualFileHeader.Length < TextHeaderSize)
-                textheader = textualFileHeader.PadRight(TextHeaderSize);
-            else if (textualFileHeader.Length > TextHeaderSize)
-                textheader = textualFileHeader.Remove(TextHeaderSize, textualFileHeader.Length - TextHeaderSize);
+            if (string.IsNullOrEmpty(textualFileHeader) || string.IsNullOrWhiteSpace(textualFileHeader))
+            {
+                textualFileHeader = new string(' ', TextHeaderSize);
+            }
+            else
+            {
+                var charArr = new char[TextHeaderSize];
+                for (int i = 0; i < textualFileHeader.Length && i < TextHeaderSize; i++)
+                {
+                    if (i < textualFileHeader.Length)
+                        charArr[i] = textualFileHeader[i];
+                    else
+                        charArr[i] = ' ';
+                }
+                textualFileHeader = new string(charArr);
+            }
 
             // encode en ebcdic and write to file.
             _writer.Write(_textHeaderEncoding.GetBytes(textualFileHeader));
