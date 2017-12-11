@@ -19,10 +19,14 @@ namespace Seismic.SegyFileIo
     /// </summary>
     public class SegyReader : Disposable
     {
+        #region Fields
+
         private readonly string _filepath;
         private readonly FileStream _stream;
         private readonly Encoding _textHeaderEncoding = EbcdicEncoding.GetEncoding("EBCDIC-US");
         private readonly BinaryReader _reader;
+
+        #endregion Fields
 
         #region Constant values
 
@@ -161,59 +165,7 @@ namespace Seismic.SegyFileIo
         /// </summary>
         /// <returns>A collection of strings, each of which represent a textual file header</returns>
         public string[] FileTextualHeaders { get; }
-
-        /// <summary>
-        /// Scans all sample values and evaluates the min and max amplitude of the sample values
-        /// </summary>
-        /// <param name="progress">progress notifier</param>
-        /// <param name="ct">cancellation token</param>
-        /// <returns>A pair of floats, the first of whick is min, second is max.</returns>
-        public Tuple<float, float> GetAmplitudeRange(IProgress<int> progress = null, CancellationToken ct = default(CancellationToken))
-        {
-            var lastTraceToReadIndex = TraceCount;
-            if (lastTraceToReadIndex != Int64.MaxValue) CodeContract.Requires(lastTraceToReadIndex <= TraceCount, "Ending trace index must be less than the number of traces in the file.");
-
-            var islilEndian = IsLittleEndian;
-
-            var dataStartIndex = 3600 + (3200 * (FileTextualHeaders.Length - 1));
-            var sampleFormat = (FormatCode)FileBinaryHeader.DataSampleFormatCode;
-            int sampleSz = SizeFrom(sampleFormat);
-
-            // as per rev 1, all data values are assumed big endian
-            var streamLen = _stream.Length;
-            var streamPos = dataStartIndex + 0 * (240 + sampleSz * FileBinaryHeader.SamplesPerTraceOfFile);
-
-            CodeContract.Assume(streamPos <= _stream.Length, "initial trace index exceeds file length.");
-
-            _stream.Seek(streamPos, SeekOrigin.Begin);
-            int ns = FileBinaryHeader.SamplesPerTraceOfFile; // Assume that the binary header has num samples per trace. dont trust trace headers
-            var traceDataBytesSz = ns * sampleSz;
-
-            int progPercent = 0;
-            float min = Single.PositiveInfinity;
-            float max = Single.NegativeInfinity;
-            for (long i = 0; (i < lastTraceToReadIndex) && (streamPos < streamLen); i++)
-            {
-                _stream.Seek(TraceHeaderBytesCount, SeekOrigin.Current);
-                var trDataBytes = _reader.ReadBytes(traceDataBytesSz);
-                var trData = GetData(trDataBytes, sampleFormat, ns);
-                Parallel.For(0, trData.Length, k =>
-                {
-                    if (trData[k] < min) min = trData[k];
-                    if (trData[k] > max) max = trData[k];
-                });
-                streamPos += 240 + traceDataBytesSz;
-
-                if (ct.IsCancellationRequested) break;
-                if (progress == null) continue;
-                var percent = (int)(100 * (double)_stream.Position / _stream.Length);
-                if (progPercent == percent) continue;
-                progress.Report(percent);
-                progPercent = percent;
-            }
-            return new Tuple<float, float>(min, max);
-        }
-
+        
         /// <summary>
         /// Reads a single trace from the file. 
         /// </summary>
@@ -280,6 +232,58 @@ namespace Seismic.SegyFileIo
 
             var traceHeaderByteArr = _reader.ReadBytes(TraceHeaderBytesCount);
             return SegyTraceHeader.From(traceHeaderByteArr, isLilEndian);
+        }
+
+        /// <summary>
+        /// Scans all sample values and evaluates the min and max amplitude of the sample values
+        /// </summary>
+        /// <param name="progress">progress notifier</param>
+        /// <param name="ct">cancellation token</param>
+        /// <returns>A pair of floats, the first of whick is min, second is max.</returns>
+        public Tuple<float, float> GetAmplitudeRange(IProgress<int> progress = null, CancellationToken ct = default(CancellationToken))
+        {
+            var lastTraceToReadIndex = TraceCount;
+            if (lastTraceToReadIndex != Int64.MaxValue) CodeContract.Requires(lastTraceToReadIndex <= TraceCount, "Ending trace index must be less than the number of traces in the file.");
+
+            var islilEndian = IsLittleEndian;
+
+            var dataStartIndex = 3600 + (3200 * (FileTextualHeaders.Length - 1));
+            var sampleFormat = (FormatCode)FileBinaryHeader.DataSampleFormatCode;
+            int sampleSz = SizeFrom(sampleFormat);
+
+            // as per rev 1, all data values are assumed big endian
+            var streamLen = _stream.Length;
+            var streamPos = dataStartIndex + 0 * (240 + sampleSz * FileBinaryHeader.SamplesPerTraceOfFile);
+
+            CodeContract.Assume(streamPos <= _stream.Length, "initial trace index exceeds file length.");
+
+            _stream.Seek(streamPos, SeekOrigin.Begin);
+            int ns = FileBinaryHeader.SamplesPerTraceOfFile; // Assume that the binary header has num samples per trace. dont trust trace headers
+            var traceDataBytesSz = ns * sampleSz;
+
+            int progPercent = 0;
+            float min = Single.PositiveInfinity;
+            float max = Single.NegativeInfinity;
+            for (long i = 0; (i < lastTraceToReadIndex) && (streamPos < streamLen); i++)
+            {
+                _stream.Seek(TraceHeaderBytesCount, SeekOrigin.Current);
+                var trDataBytes = _reader.ReadBytes(traceDataBytesSz);
+                var trData = GetData(trDataBytes, sampleFormat, ns);
+                Parallel.For(0, trData.Length, k =>
+                {
+                    if (trData[k] < min) min = trData[k];
+                    if (trData[k] > max) max = trData[k];
+                });
+                streamPos += 240 + traceDataBytesSz;
+
+                if (ct.IsCancellationRequested) break;
+                if (progress == null) continue;
+                var percent = (int)(100 * (double)_stream.Position / _stream.Length);
+                if (progPercent == percent) continue;
+                progress.Report(percent);
+                progPercent = percent;
+            }
+            return new Tuple<float, float>(min, max);
         }
 
         /// <summary>
