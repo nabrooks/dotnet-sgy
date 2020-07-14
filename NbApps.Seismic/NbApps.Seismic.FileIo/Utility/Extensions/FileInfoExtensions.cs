@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -68,6 +69,7 @@ namespace Utility.Extensions
                     }
                 }
             }
+            destination.Refresh();
             return destination;
         }
     }

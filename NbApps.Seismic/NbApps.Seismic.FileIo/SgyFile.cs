@@ -60,7 +60,7 @@ namespace Hess.Seismic.SegyFileIo
             this.TraceCount = (stream.Length - (3600 + ((TextHeaders.Count() - 1) * TextHeaderBytesCount))) / (240 + (BinaryFileHeader.SamplesPerTraceOfFile * this.dataSampleSize));
             switch ((FormatCode)this.header.DataSampleFormatCode)
             {
-                case FormatCode.IbmFloatingPoint4: 
+                case FormatCode.IbmFloatingPoint4:
                     traceDataReadingFunc = (count) => binaryReader.ReadIbmSingles(count);
                     traceDataWritingFunc = (floats) => binaryWriter.WriteIbm(floats);
                     break;
@@ -112,7 +112,7 @@ namespace Hess.Seismic.SegyFileIo
             if (fileInfo == null) throw new ArgumentNullException("File info cannot be null");
             if (fileInfo.Exists == false) throw new FileNotFoundException($"File {fileInfo.FullName} does not exist");
             if (fileInfo.Length < TextHeaderBytesCount + BinaryHeaderBytesCount) throw new ArgumentException($"File {fileInfo.FullName} does not have enough bytes in its content to infer file metadata.  This implies the file is corrupt, or not a real sgy file. Try creating a new sgy file isntead.");
-            
+
             // Local variables
             byte[] buffer = new byte[65536];
             FileStream fileStream;
@@ -137,7 +137,7 @@ namespace Hess.Seismic.SegyFileIo
             if (lilEFormatCode >= 0 || lilEFormatCode <= 8) endianBitConverter = new LittleEndianBitConverter();
             if (bigEFormatCode >= 0 || bigEFormatCode <= 8) endianBitConverter = new BigEndianBitConverter();
             else throw new Exception("Cannot infer endianess from the format code");
-            
+
             // File Binary Header
             binaryHeader = FileHeader.From(buffer, TextHeaderBytesCount, endianBitConverter);
 
@@ -149,7 +149,7 @@ namespace Hess.Seismic.SegyFileIo
 
             return new SgyFile(fileStream, textHeaders, textHeaderEncoding, binaryHeader, endianBitConverter);
         }
-        
+
         #region Creation Methods
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace Hess.Seismic.SegyFileIo
             SgyFile file = new SgyFile(fileStream, new string[] { conditionedTextHeader }, textHeaderEncoding, header, endianBitConverter);
             return file;
         }
-        
+
         /// <summary>
         /// Creates a new Sgy file
         /// </summary>
@@ -436,7 +436,7 @@ namespace Hess.Seismic.SegyFileIo
             return traces;
         }
 
-         #endregion Read Methods
+        #endregion Read Methods
 
         #region Write Methods
 
@@ -533,6 +533,61 @@ namespace Hess.Seismic.SegyFileIo
                 var traceHeaderBytes = trace.Header.ToBytes(this.BitConverter);
                 binaryWriter.Write(traceHeaderBytes);
                 traceDataWritingFunc(trace.Data);
+            }
+        }
+
+        /// <summary>
+        /// Writes an array of floats to file
+        /// </summary>
+        /// <param name="traceData">The array of data representing a trace's data</param>
+        /// <param name="traceIndex">The index of the trace to write data to</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(float[] traceData, int traceIndex)
+        {
+            Write(traceData, (long)traceIndex);
+        }
+
+        /// <summary>
+        /// Writes an array of floats to file
+        /// </summary>
+        /// <param name="traceData">The array of data representing a trace's data</param>
+        /// <param name="traceIndex">The index of the trace to write data to</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(float[] traceData, long traceIndex)
+        {
+            if (traceData == null) throw new ArgumentNullException("Trace data cannot be null when appending");
+            if (traceData.Length != BinaryFileHeader.SamplesPerTraceOfFile) throw new ArgumentException($"Trace (Length:{traceData.Length}) must have {BinaryFileHeader.SamplesPerTraceOfFile}");
+
+            var traceStartBytePosition = (TextHeaders.Count() * TextHeaderBytesCount) + BinaryHeaderBytesCount + (traceIndex * (TraceHeaderBytesCount + (BinaryFileHeader.SamplesPerTraceOfFile * dataSampleSize)));
+            binaryWriter.BaseStream.Seek(traceStartBytePosition + TraceHeaderBytesCount, SeekOrigin.Begin);
+            traceDataWritingFunc(traceData);
+        }
+
+        /// <summary>
+        /// Writes a set of arrays of floats to file
+        /// </summary>
+        /// <param name="traceDatas">The set of arrays of data representing a trace's data</param>
+        /// <param name="startTraceIndex">The index of the trace to write data to</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(IEnumerable<float[]> traceDatas, int startTraceIndex)
+        {
+            Write(traceDatas, (long)startTraceIndex);
+        }
+
+        /// <summary>
+        /// Writes a set of arrays of floats to file
+        /// </summary>
+        /// <param name="traceDatas">The set of arrays of data representing a trace's data</param>
+        /// <param name="startTraceIndex">The index of the trace to write data to</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Write(IEnumerable<float[]> traceDatas, long startTraceIndex)
+        {
+            var traceStartBytePosition = (TextHeaders.Count() * TextHeaderBytesCount) + BinaryHeaderBytesCount + (startTraceIndex * (TraceHeaderBytesCount + (BinaryFileHeader.SamplesPerTraceOfFile * dataSampleSize)));
+            binaryWriter.BaseStream.Seek(traceStartBytePosition, SeekOrigin.Begin);
+            foreach (float[] traceData in traceDatas)
+            {
+                binaryWriter.BaseStream.Seek(TraceHeaderBytesCount, SeekOrigin.Current);
+                traceDataWritingFunc(traceData);
             }
         }
 
