@@ -269,27 +269,26 @@ namespace Hess.Seismic.SegyFileIo
         /// Copys a preexisting seismic file except for sample values in each traces and populates
         /// each trace with sample values specified by an input arguemnt at runtime
         /// </summary>
-        /// <param name="newSgyFileInfo">The file info of the new file to copy to</param>
-        /// <param name="oldSgyFileInfo">The old Sgy file info to copy headers from</param>
+        /// <param name="destinationFileInfo">The file info of the new file to copy to</param>
+        /// <param name="sourceFileInfo">The old Sgy file info to copy headers from</param>
         /// <param name="sampleValue">The sample value to populate all trace data with</param>
         /// <returns>The new sgy file</returns>
-        public static SgyFile CopyPopulated(FileInfo oldSgyFileInfo, FileInfo newSgyFileInfo, float sampleValue = 0.0f)
+        public static SgyFile CopyPopulated(FileInfo sourceFileInfo, FileInfo destinationFileInfo, float sampleValue = 0.0f)
         {
-            if (newSgyFileInfo.Exists == true)
-                newSgyFileInfo.Delete();
+            if (destinationFileInfo.Exists == true)
+                destinationFileInfo.Delete();
 
-            newSgyFileInfo = oldSgyFileInfo.FastCopy(newSgyFileInfo);
+            destinationFileInfo = sourceFileInfo.FastCopy(destinationFileInfo);
 
-            SgyFile newSgyFile = SgyFile.Open(newSgyFileInfo);
-            BigArray<TraceHeader> allTraceHeaders = newSgyFile.ReadTraceHeaders().ToBigArray();
+            SgyFile newSgyFile = SgyFile.Open(destinationFileInfo);
+
             float[] buffer = new float[newSgyFile.BinaryFileHeader.SamplesPerTraceOfFile];
-
             if (sampleValue != 0)
                 for (int i = 0; i < buffer.Length; i++)
                     buffer[i] = sampleValue;
 
-            for (long ti = 0; ti < allTraceHeaders.Length; ti++)
-                newSgyFile.Write(new Trace(allTraceHeaders[ti], buffer), ti);
+            for (long ti = 0; ti < newSgyFile.TraceCount; ti++)
+                newSgyFile.Write(buffer, ti);
             return newSgyFile;
         }
 

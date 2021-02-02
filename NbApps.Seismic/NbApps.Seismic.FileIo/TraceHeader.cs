@@ -86,22 +86,26 @@ namespace Hess.Seismic.SegyFileIo
             hdr.GeophoneGroupNumOfLastTraceOrigRecord = bytesToInt16(bytes, 174);
             hdr.GapSize = bytesToInt16(bytes, 176);
             hdr.TaperOverTravel = bytesToInt16(bytes, 178);
-            hdr.Local1 = bytesToInt32(bytes, 180);
-            hdr.Local2 = bytesToInt32(bytes, 184);
-            hdr.Local3 = bytesToInt32(bytes, 188);
-            hdr.Local4 = bytesToInt32(bytes, 192);
-            hdr.Local5 = bytesToInt32(bytes, 196);
-            hdr.Local6 = bytesToInt32(bytes, 200);
-            hdr.NumTr = bytesToInt32(bytes, 204);
-            hdr.Mark = bytesToInt16(bytes, 208);
-            hdr.ShortPad = bytesToInt16(bytes, 210);
-            hdr.Local7 = bytesToInt32(bytes, 212);
-            hdr.Local8 = bytesToInt32(bytes, 216);
-            hdr.Local9 = bytesToInt32(bytes, 220);
-            hdr.Local10 = bytesToInt32(bytes, 224);
-            hdr.Local11 = bytesToInt32(bytes, 228);
-            hdr.Local12 = bytesToInt32(bytes, 232);
-            hdr.Local13 = bytesToInt32(bytes, 236);
+            hdr.XCdp = bytesToInt32(bytes, 180);
+            hdr.YCdp = bytesToInt32(bytes, 184);
+            hdr.Inline = bytesToInt32(bytes, 188);
+            hdr.Crossline = bytesToInt32(bytes, 192);
+            hdr.ShotPoint = bytesToInt32(bytes, 196);
+            hdr.ShotPointScalar = bytesToInt16(bytes, 200);
+            hdr.TraceValueMeasurementUnit = bytesToInt16(bytes, 202);
+            hdr.TransductionConstantMantissa = bytesToInt32(bytes, 204);
+            hdr.TransductionConstantPower = bytesToInt16(bytes, 208);
+            hdr.TransductionUnit = bytesToInt16(bytes, 210);
+            hdr.TraceIdentifier = bytesToInt16(bytes, 212);
+            hdr.ScalarTraceHeader = bytesToInt16(bytes, 214);
+            hdr.SourceType = bytesToInt16(bytes, 216);
+            hdr.SourceEnergyDirectionMantissa = bytesToInt32(bytes, 218);
+            hdr.SourceEnergyDirectionExponent = bytesToInt16(bytes, 222);
+            hdr.SourceMeasurementMantissa = bytesToInt32(bytes, 224);
+            hdr.SourceMeasurementExponent = bytesToInt16(bytes, 228);
+            hdr.SourceMeasurementUnit = bytesToInt16(bytes, 230);
+            hdr.UnassignedInt1 = bytesToInt32(bytes, 232);
+            hdr.UnassignedInt2 = bytesToInt32(bytes, 236);
             return hdr;
         }
 
@@ -114,9 +118,9 @@ namespace Hess.Seismic.SegyFileIo
         public Int32 EnergySourcePtNum;                             // "Energy Source Point Number (17-20)"
         public Int32 CdpNum;                                        // "Cdp Number (21-24)"
         public Int32 TraceNumber;                                   // "Trace Number (25-28)"
-        public Int16 TraceId;                                       // "Trace Id (29-30"
+        public Int16 TraceId;                                       // "Trace Id (29-30)"
         public Int16 NumVerticalStackedTraces;                      // "Vertical Stacked Trace Count (31-32)"
-        public Int16 CdpFold;                                       // "Cdp Fold (33-34"
+        public Int16 CdpFold;                                       // "Cdp Fold (33-34)"
         public Int16 DataUse;                                       // "Data Use (35-36)"
         public Int32 SourceReceiverDistance;                        // "Source-Reciever Distance (37-40)"
         public Int32 RecieverGroupElevation;                        // "Reciever Group Elevation (41-44)"
@@ -178,24 +182,136 @@ namespace Hess.Seismic.SegyFileIo
         public Int16 GeophoneGroupNumOfLastTraceOrigRecord;         // "Geophone Group Number of Last Trace Original Rec (175-176)"
         public Int16 GapSize;                                       // "Gap Size (177-178)"
         public Int16 TaperOverTravel;                               // "Tape Over Travel (179-180)"
-        public Int32 Local1;                                        // "Local1 (often inline) (179-180)"
-        public Int32 Local2;                                        // "Local2 (often crossline) (181-184)"
-        public Int32 Local3;                                        // "Local3 (185-188)"
-        public Int32 Local4;                                        // "Local4 (189-192)"
-        public Int32 Local5;                                        // "Local5 (193-196)"
-        public Int32 Local6;                                        // "Local6 (197-200)"
-        public Int32 NumTr;                                         // "Trace Number (201-204)"
-        public Int16 Mark;                                          // "Mark (205-208)"
-        public Int16 ShortPad;                                      // "Short Pad (209-212)"
-        public Int32 Local7;                                        // "Local7 (213-216)"
-        public Int32 Local8;                                        // "Local8 (217-220)"
-        public Int32 Local9;                                        // "Local9 (221-224)"
-        public Int32 Local10;                                       // "Local10 (225-228)"
-        public Int32 Local11;                                       // "Local11 (229-232)"
-        public Int32 Local12;                                       // "Local12 (233-236)"
-        public Int32 Local13;                                       // "Local13 (237-240)"
+        public Int32 XCdp;                                          // (181-184)
+        public Int32 YCdp;                                          // (185-188)
+        public Int32 Inline;                                        // (189-192)
+        public Int32 Crossline;                                     // (193-196)
+        public Int32 ShotPoint;                                     // (197-200)
+        public Int16 ShotPointScalar;                               // (201-202)
+        public Int16 TraceValueMeasurementUnit;                     // (203-204)
+        public Int32 TransductionConstantMantissa;                  // (205-208)
+        public Int16 TransductionConstantPower;                     // (209-210)
+        public Int16 TransductionUnit;                              // (211-212)
+        public Int16 TraceIdentifier;                               // (213-214)
+        public Int16 ScalarTraceHeader;                             // (215-216)
+        public Int16 SourceType;                                    // (217-218)
+        public Int32 SourceEnergyDirectionMantissa;                 // (219-222)
+        public Int16 SourceEnergyDirectionExponent;                 // (223-224)
+        public Int32 SourceMeasurementMantissa;                     // (225-228)
+        public Int16 SourceMeasurementExponent;                     // (229-230)
+        public Int16 SourceMeasurementUnit;                         // (231-232)
+        public Int32 UnassignedInt1;                                // (233-236)
+        public Int32 UnassignedInt2;                                // (237-240)
 
         #endregion Properties
+
+        /// <summary>
+        /// Gets the trace header property value based on the zero based index of 
+        /// that property (petrel usually uses one based indexing for trace headers).
+        /// </summary>
+        /// <param name="index">The zero based index of the property intended to get</param>
+        /// <returns>An integer</returns>
+        public Int32 this[int index]
+        {
+            get
+            {
+                if (index == 0) return TraceNumInLine;
+                else if (index == 4) return TraceNumInFile;
+                else if (index == 8) return ShotNumOrStackTraceNum;
+                else if (index == 12) return TraceNumInShot;
+                else if (index == 16) return EnergySourcePtNum;
+                else if (index == 20) return CdpNum;
+                else if (index == 24) return TraceNumber;
+                else if (index == 28) return TraceId;
+                else if (index == 30) return NumVerticalStackedTraces;
+                else if (index == 32) return CdpFold;
+                else if (index == 34) return DataUse;                                        // "Data Use (35-36)"
+                else if (index == 36) return SourceReceiverDistance;                         // "Source-Reciever Distance (37-40)"
+                else if (index == 40) return RecieverGroupElevation;                         // "Reciever Group Elevation (41-44)"
+                else if (index == 44) return SurfaceElevationAtSource;                       // "Surface Elevation At Source (45-48)"
+                else if (index == 48) return SourceDepthBelowSurf;                           // "Source Depth Below Surface (49-52)"
+                else if (index == 52) return DatumElevAtRecieverGroup;                       // "Datum Elevation at Reciever Group (53-56)"
+                else if (index == 56) return DatumElevationAtSource;                         // "Datum Elevation at Source (57-60)"
+                else if (index == 60) return WaterDepthAtSource;                             // "Water Depth at Source (61-64)"
+                else if (index == 64) return WaterDepthAtRecieverGroup;                      // "Water Depth at Reciever Group (65-68"
+                else if (index == 68) return ScalarForElevationAndDepth;                     // "Elevation or Depth Scalar (69-70)"
+                else if (index == 70) return ScalarForCoordinates;                           // "Coordinate Scalar (71-72)"
+                else if (index == 72) return XSourceCoordinate;                              // "X Source (73-76)"
+                else if (index == 76) return YSourceCoordinate;                              // "Y Source (77-80)"
+                else if (index == 80) return XRecieverGroupCoordinate;                       // "X Reciever Group (81-84)"
+                else if (index == 84) return YRecieverGroupCoordinate;                       // "Y Reciever Group (85-88)"
+                else if (index == 88) return CoordinateUnit;                                 // "Coordinate Unit (89-90)"
+                else if (index == 90) return WeatheringVelocity;                             // "Weathering Velocity (91-92)"
+                else if (index == 92) return SubweatheringVelocity;                          // "SubWeathering Velocity (93-94)"
+                else if (index == 94) return UpholeTimeAtSource;                             // "Uphole Time at Source (95-95)"
+                else if (index == 96) return UpholeTimeAtReceiverGroup;                      // "Uphole Time at Reciever (97-98)"
+                else if (index == 98) return SourceStaticCorrection;                         // "Source Static Correction (99-100)"
+                else if (index == 100) return ReceiverGroupStaticCorrection;                 // "Reciever Static Correction (101-102)"
+                else if (index == 102) return TotalStaticApplied;                            // "Total Static Correction (103-104)"
+                else if (index == 104) return HeaderTimeBreakLagMs;                          // "Header Time Break Lag(ms) (105-106)"
+                else if (index == 106) return TimeBreakShotLagMs;                            // "Time Break Shot Lag(ms) (107-108)"
+                else if (index == 108) return ShotRecordingLag;                              // "Shot Record Time Lag(ms) (109-110)"
+                else if (index == 110) return MuteTimeStart;                                 // "Mute Time Start(ms) (111-112)"
+                else if (index == 112) return MuteTimeEnd;                                   // "Mute Time End(ms) (113-114)"
+                else if (index == 114) return SampleCount;                                   // "Sample Count (115-)"
+                else if (index == 116) return SampleIntervalMs;                              // "Sample Rate (117-)"
+                else if (index == 118) return GainType;                                      // "Gain Type (119-120)"
+                else if (index == 120) return GainConst;                                     // "Gain Const (121-122)"
+                else if (index == 122) return EarlyGainDb;                                   // "Early Gain(db) (123-124)"
+                else if (index == 124) return Correlated;                                    // "Correlated (125-126)"
+                else if (index == 126) return SweepFrequencyStart;                           // "Sweep Frequency Start (127-128)"
+                else if (index == 128) return SweepFrequencyEnd;                             // "Sweep Frequency End (129-130)"
+                else if (index == 130) return SweepLengthMs;                                 // "Sweep Length(ms) (131-132)"
+                else if (index == 132) return SweepType;                                     // "Sweep Type (133-134)"
+                else if (index == 134) return SweepTaperTraceLengthStartMs;                  // "Sweep Taper Trace Length Start(ms) (135-136)"
+                else if (index == 136) return SweepTaperTraceLengthEndMs;                    // "Sweep Taper Trace Length End(ms) (137-138)"
+                else if (index == 138) return TaperType;                                     // "Taper Type (139-140)"
+                else if (index == 140) return AliasFilterFrequency;                          // "Alias Filter Frequency (141-142)"
+                else if (index == 142) return AliasFilterSlope;                              // "Alias Filter Slope (143-144)"
+                else if (index == 144) return NotchFilterFrequency;                          // "Notch Filter Frequency (145-146)"
+                else if (index == 146) return NotchFilterSlope;                              // "Notch Filter Slope (147-148)"
+                else if (index == 148) return LowCutFrequency;                               // "Low Cut Frequency (149-150)"
+                else if (index == 150) return HighCutFrequency;                              // "High Cut Frequency (151-152)"
+                else if (index == 152) return LowCutSlope;                                   // "Low Cut Slope (153-154)"
+                else if (index == 154) return HighCutSlope;                                  // "High Cut Slope (155-156)"
+                else if (index == 156) return Yr;                                            // "Year (157-158)"
+                else if (index == 158) return Day;                                           // "Day (159-160)"
+                else if (index == 160) return Hour;                                          // "Hour (161-162)"
+                else if (index == 162) return Minute;                                        // "Minute (163-164)"
+                else if (index == 164) return Second;                                        // "Second (165-166)"
+                else if (index == 166) return TimeBasis;                                     // "Time Basis (167-168)"
+                else if (index == 168) return TraceWeightFactor;                             // "Trace Weight Factor (169-170)"
+                else if (index == 170) return GeophoneGroupNumOfRollSwitchPositionOne;       // "Geophone Group Number of Roll Switch Position One (171-172)"
+                else if (index == 172) return GeophoneGroupNumOfFirstTraceOrigRecord;        // "Geophone Group Number of First Trace Original Rec (173-174)"
+                else if (index == 174) return GeophoneGroupNumOfLastTraceOrigRecord;         // "Geophone Group Number of Last Trace Original Rec (175-176)"
+                else if (index == 176) return GapSize;                                       // "Gap Size (177-178)"
+                else if (index == 178) return TaperOverTravel;                               // "Tape Over Travel (179-180)"
+                else if (index == 180) return XCdp;                                          // (181-184)
+                else if (index == 184) return YCdp;                                          // (185-188)
+                else if (index == 188) return Inline;                                        // (189-192)
+                else if (index == 192) return Crossline;                                     // (193-196)
+                else if (index == 196) return ShotPoint;                                     // (197-200)
+                else if (index == 200) return ShotPointScalar;                               // (201-202)
+                else if (index == 202) return TraceValueMeasurementUnit;                     // (203-204)
+                else if (index == 204) return TransductionConstantMantissa;                  // (205-208)
+                else if (index == 208) return TransductionConstantPower;                     // (209-210)
+                else if (index == 210) return TransductionUnit;                              // (211-212)
+                else if (index == 212) return TraceIdentifier;                               // (213-214)
+                else if (index == 214) return ScalarTraceHeader;                             // (215-216)
+                else if (index == 216) return SourceType;                                    // (217-218)
+                else if (index == 218) return SourceEnergyDirectionMantissa;                 // (219-222)
+                else if (index == 222) return SourceEnergyDirectionExponent;                 // (223-224)
+                else if (index == 224) return SourceMeasurementMantissa;                     // (225-228)
+                else if (index == 228) return SourceMeasurementExponent;                     // (229-230)
+                else if (index == 230) return SourceMeasurementUnit;                         // (231-232)
+                else if (index == 232) return UnassignedInt1;                                // (233-236)
+                else if (index == 236) return UnassignedInt2;                                // (237-240)
+                else
+                {
+                    throw new Exception($"trace header property starting index {index} does not exist");
+                }
+            }
+        }
 
         public byte[] ToBytes(EndianBitConverter bitConverter)
         {
@@ -277,22 +393,26 @@ namespace Hess.Seismic.SegyFileIo
             bitConverter.CopyBytes((Int16)GeophoneGroupNumOfLastTraceOrigRecord, buffer, offset + 174);
             bitConverter.CopyBytes((Int16)GapSize, buffer, offset + 176);
             bitConverter.CopyBytes((Int16)TaperOverTravel, buffer, offset + 178);
-            bitConverter.CopyBytes(Local1, buffer, offset + 180);
-            bitConverter.CopyBytes(Local2, buffer, offset + 184);
-            bitConverter.CopyBytes(Local3, buffer, offset + 188);
-            bitConverter.CopyBytes(Local4, buffer, offset + 192);
-            bitConverter.CopyBytes(Local5, buffer, offset + 196);
-            bitConverter.CopyBytes(Local6, buffer, offset + 200);
-            bitConverter.CopyBytes(NumTr, buffer, offset + 204);
-            bitConverter.CopyBytes((Int16)Mark, buffer, offset + 208);
-            bitConverter.CopyBytes((Int16)ShortPad, buffer, offset + 210);
-            bitConverter.CopyBytes(Local7, buffer, offset + 212);
-            bitConverter.CopyBytes(Local8, buffer, offset + 216);
-            bitConverter.CopyBytes(Local9, buffer, offset + 220);
-            bitConverter.CopyBytes(Local10, buffer, offset + 224);
-            bitConverter.CopyBytes(Local11, buffer, offset + 228);
-            bitConverter.CopyBytes(Local12, buffer, offset + 232);
-            bitConverter.CopyBytes(Local13, buffer, offset + 236);
+            bitConverter.CopyBytes(XCdp, buffer, offset + 180);
+            bitConverter.CopyBytes(YCdp, buffer, offset + 184);
+            bitConverter.CopyBytes(Inline, buffer, offset + 188);
+            bitConverter.CopyBytes(Crossline, buffer, offset + 192);
+            bitConverter.CopyBytes(ShotPoint, buffer, offset + 196);
+            bitConverter.CopyBytes((Int16)ShotPointScalar, buffer, offset + 200);
+            bitConverter.CopyBytes((Int16)TraceValueMeasurementUnit, buffer, offset + 202);
+            bitConverter.CopyBytes(TransductionConstantMantissa, buffer, offset + 204);
+            bitConverter.CopyBytes((Int16)TransductionConstantPower, buffer, offset + 208);
+            bitConverter.CopyBytes((Int16)TransductionUnit, buffer, offset + 210);
+            bitConverter.CopyBytes((Int16)TraceIdentifier, buffer, offset + 212);
+            bitConverter.CopyBytes((Int16)ScalarTraceHeader, buffer, offset + 214);
+            bitConverter.CopyBytes((Int16)SourceType, buffer, offset + 216);
+            bitConverter.CopyBytes(SourceEnergyDirectionMantissa, buffer, offset + 218);
+            bitConverter.CopyBytes((Int16)SourceEnergyDirectionExponent, buffer, offset + 222);
+            bitConverter.CopyBytes(SourceMeasurementMantissa, buffer, offset + 224);
+            bitConverter.CopyBytes((Int16)SourceMeasurementExponent, buffer, offset + 228);
+            bitConverter.CopyBytes((Int16)SourceMeasurementUnit, buffer, offset + 230);
+            bitConverter.CopyBytes(UnassignedInt1, buffer, offset + 232);
+            bitConverter.CopyBytes(UnassignedInt2, buffer, offset + 236);
         }
     }
 }
