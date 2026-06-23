@@ -322,9 +322,9 @@ namespace Hess.Seismic.SegyFileIo
 
         public void ToBytes(byte[] buffer, int offset, EndianBitConverter bitConverter)
         {
-            bitConverter.CopyBytes(TraceNumInLine, buffer, offset + offset + 0);
-            bitConverter.CopyBytes(TraceNumInFile, buffer, offset + offset + 4);
-            bitConverter.CopyBytes(ShotNumOrStackTraceNum, buffer, offset + offset + 8);
+            bitConverter.CopyBytes(TraceNumInLine, buffer, offset + 0);
+            bitConverter.CopyBytes(TraceNumInFile, buffer, offset + 4);
+            bitConverter.CopyBytes(ShotNumOrStackTraceNum, buffer, offset + 8);
             bitConverter.CopyBytes(TraceNumInShot, buffer, offset + 12);
             bitConverter.CopyBytes(EnergySourcePtNum, buffer, offset + 16);
             bitConverter.CopyBytes(CdpNum, buffer, offset + 20);

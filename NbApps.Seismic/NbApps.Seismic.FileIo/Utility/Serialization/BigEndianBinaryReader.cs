@@ -39,6 +39,25 @@ namespace Utility.Extensions
 
         public BigEndianBinaryReader(Stream input, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen) { }
 
+        /// <summary>
+        /// Reads exactly <paramref name="count"/> bytes into <see cref="buffer"/>, growing the buffer if needed and
+        /// looping until the request is satisfied. <see cref="Stream.Read(byte[],int,int)"/> is permitted to return
+        /// fewer bytes than requested, so calling it once and assuming success silently corrupts decoded values.
+        /// </summary>
+        /// <exception cref="EndOfStreamException">The stream ended before <paramref name="count"/> bytes were read.</exception>
+        private void ReadIntoBuffer(int count)
+        {
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+            if (buffer.Length < count) buffer = new byte[count];
+            int total = 0;
+            while (total < count)
+            {
+                int read = BaseStream.Read(buffer, total, count - total);
+                if (read == 0) throw new EndOfStreamException($"Expected {count} bytes but reached end of stream after {total}.");
+                total += read;
+            }
+        }
+
         public bool[] ReadBooleans(int count)
         {
             bool[] booleans = new bool[count];
@@ -49,7 +68,7 @@ namespace Utility.Extensions
 
         public unsafe override double ReadDouble()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* bptr = buffer)
             {
                 ulong fconv = ((ulong*)bptr)[0];
@@ -63,7 +82,7 @@ namespace Utility.Extensions
             if (count < 0) throw new ArgumentOutOfRangeException($"count: {count}");
             if (count == 0) return new double[0];
 
-            BaseStream.Read(buffer, 0, count * 8);
+            ReadIntoBuffer(count * 8);
             fixed (byte* bptr = buffer)
             {
                 double[] copy = new double[count];
@@ -89,7 +108,7 @@ namespace Utility.Extensions
 
         public unsafe float ReadIbmSingle()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* bptr = buffer)
             {
                 int fmant;
@@ -114,7 +133,7 @@ namespace Utility.Extensions
             if (count < 0) throw new ArgumentOutOfRangeException($"count: {count}");
             if (count == 0) return new float[0];
 
-            BaseStream.Read(buffer, 0, count * 4);
+            ReadIntoBuffer(count * 4);
             fixed (byte* bptr = buffer)
             {
                 float[] copy = new float[count];
@@ -142,7 +161,7 @@ namespace Utility.Extensions
 
         public unsafe override short ReadInt16()
         {
-            BaseStream.Read(buffer, 0, 2);
+            ReadIntoBuffer(2);
             fixed(byte* bptr = buffer)
             {
                 short fconv = ((short*)bptr)[0];
@@ -153,7 +172,7 @@ namespace Utility.Extensions
         public unsafe short[] ReadInt16s(int count)
         {
             short[] result = new short[count];
-            BaseStream.Read(buffer, 0, count * 2);
+            ReadIntoBuffer(count * 2);
             fixed(byte* pBuffer = buffer)
             {
                 for (int i = 0; i < count; i++)
@@ -168,7 +187,7 @@ namespace Utility.Extensions
 
         public unsafe override int ReadInt32()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* pBuffer = buffer)
             {
                 int fconv = ((int*)pBuffer)[0];
@@ -179,7 +198,7 @@ namespace Utility.Extensions
 
         public unsafe int[] ReadInt32s(int count)
         {
-            BaseStream.Read(buffer, 0, count * 4);
+            ReadIntoBuffer(count * 4);
             fixed (byte* bptr = buffer)
             {
                 int[] copy = new int[count];
@@ -194,7 +213,7 @@ namespace Utility.Extensions
 
         public unsafe override long ReadInt64()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed(byte* pBuffer = buffer)
             {
                 long fconv = ((long*)pBuffer)[0];
@@ -205,7 +224,7 @@ namespace Utility.Extensions
         public unsafe long[] ReadInt64s(int count)
         {
             long[] result = new long[count];
-            BaseStream.Read(buffer, 0, count * 8);
+            ReadIntoBuffer(count * 8);
             fixed (byte* pBuffer = buffer)
             {
                 for (int i = 0; i < count; i++)
@@ -220,7 +239,7 @@ namespace Utility.Extensions
         public unsafe sbyte[] ReadSBytes(int count)
         {
             sbyte[] result = new sbyte[count];
-            BaseStream.Read(buffer, 0, count);
+            ReadIntoBuffer(count);
             fixed (byte* pBuffer = buffer)
             {
                 for (int i = 0; i < count; i++)
@@ -234,7 +253,7 @@ namespace Utility.Extensions
 
         public unsafe override float ReadSingle()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed(byte* bptr = buffer)
             {
                 int fconv = ((int*)bptr)[0];
@@ -248,7 +267,7 @@ namespace Utility.Extensions
             if (count < 0) throw new ArgumentOutOfRangeException($"count: {count}");
             if (count == 0) return new float[0];
 
-            BaseStream.Read(buffer, 0, count * 4);
+            ReadIntoBuffer(count * 4);
             fixed (byte* bptr = buffer)
             {
                 float[] copy = new float[count];
@@ -264,7 +283,7 @@ namespace Utility.Extensions
 
         public unsafe override ushort ReadUInt16()
         {
-            BaseStream.Read(buffer, 0, 2);
+            ReadIntoBuffer(2);
             fixed (byte* bptr = buffer)
             {
                 ushort fconv = ((ushort*)bptr)[0];
@@ -275,7 +294,7 @@ namespace Utility.Extensions
         public unsafe ushort[] ReadUInt16s(int count)
         {
             ushort[] result = new ushort[count];
-            BaseStream.Read(buffer, 0, count * 2);
+            ReadIntoBuffer(count * 2);
             fixed (byte* pBuffer = buffer)
             {
                 for (int i = 0; i < count; i++)
@@ -290,7 +309,7 @@ namespace Utility.Extensions
 
         public unsafe override uint ReadUInt32()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* bptr = buffer)
             {
                 uint fconv = ((uint*)bptr)[0];
@@ -301,7 +320,7 @@ namespace Utility.Extensions
         public unsafe uint[] ReadUInt32s(int count)
         {
             uint[] result = new uint[count];
-            BaseStream.Read(buffer, 0, count * 4);
+            ReadIntoBuffer(count * 4);
             fixed (byte* pBuffer = buffer)
             {
                 for (int i = 0; i < count; i++)
@@ -316,7 +335,7 @@ namespace Utility.Extensions
 
         public unsafe override ulong ReadUInt64()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* pBuffer = buffer)
             {
                 var value = ((ulong*)pBuffer)[0];
@@ -326,7 +345,7 @@ namespace Utility.Extensions
 
         public unsafe ulong[] ReadUInt64s(int count)
         {
-            BaseStream.Read(buffer, 0, count * 8);
+            ReadIntoBuffer(count * 8);
             fixed (byte* pBuffer = buffer)
             {
                 ulong[] result = new ulong[count];

@@ -36,11 +36,30 @@ namespace Utility.Extensions
 
         public LittleEndianBinaryReader(Stream input, Encoding encoding, bool leaveOpen) : base(input, encoding, leaveOpen) { }
 
+        /// <summary>
+        /// Reads exactly <paramref name="count"/> bytes into <see cref="buffer"/>, growing the buffer if needed and
+        /// looping until the request is satisfied. <see cref="Stream.Read(byte[],int,int)"/> is permitted to return
+        /// fewer bytes than requested, so calling it once and assuming success silently corrupts decoded values.
+        /// </summary>
+        /// <exception cref="EndOfStreamException">The stream ended before <paramref name="count"/> bytes were read.</exception>
+        private void ReadIntoBuffer(int count)
+        {
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+            if (buffer.Length < count) buffer = new byte[count];
+            int total = 0;
+            while (total < count)
+            {
+                int read = BaseStream.Read(buffer, total, count - total);
+                if (read == 0) throw new EndOfStreamException($"Expected {count} bytes but reached end of stream after {total}.");
+                total += read;
+            }
+        }
+
         public bool[] ReadBooleans(int count)
         {
             if (count == 0) return new bool[0];
             var byteCount = count;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             bool[] copy = new bool[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -48,7 +67,7 @@ namespace Utility.Extensions
 
         public unsafe override double ReadDouble()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* bptr = buffer)
             {
                 ulong fconv = ((ulong*)bptr)[0];
@@ -60,7 +79,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new double[0];
             var byteCount = count * 8;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             double[] copy = new double[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -69,7 +88,7 @@ namespace Utility.Extensions
         public unsafe double ReadIbmDouble()
         {
             // Not so sure this works, needs to be tested and modified
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* bptr = buffer)
             {
                 long fmant;
@@ -96,7 +115,7 @@ namespace Utility.Extensions
 
         public unsafe float ReadIbmSingle()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* bptr = buffer)
             {
                 int fmant;
@@ -120,7 +139,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new float[0];
 
-            BaseStream.Read(buffer, 0, count * 4);
+            ReadIntoBuffer(count * 4);
             fixed (byte* bptr = buffer)
             {
                 float[] copy = new float[count];
@@ -148,7 +167,7 @@ namespace Utility.Extensions
 
         public unsafe override short ReadInt16()
         {
-            BaseStream.Read(buffer, 0, 2);
+            ReadIntoBuffer(2);
             fixed (byte* bptr = buffer)
             {
                 return ((short*)bptr)[0];
@@ -159,7 +178,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new short[0];
             var byteCount = count * 2;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             short[] copy = new short[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -167,7 +186,7 @@ namespace Utility.Extensions
 
         public unsafe override int ReadInt32()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* pBuffer = buffer)
             {
                 int fconv = ((int*)pBuffer)[0];
@@ -179,7 +198,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new int[0];
             var byteCount = count * 4;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             int[] copy = new int[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -187,7 +206,7 @@ namespace Utility.Extensions
 
         public unsafe override long ReadInt64()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* pBuffer = buffer)
             {
                 return ((long*)pBuffer)[0];
@@ -198,7 +217,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new long[0];
             var byteCount = count * 8;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             long[] copy = new long[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -208,7 +227,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new sbyte[0];
             var byteCount = count;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             sbyte[] copy = new sbyte[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -216,7 +235,7 @@ namespace Utility.Extensions
 
         public unsafe override float ReadSingle()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* bptr = buffer)
             {
                 int fconv = ((int*)bptr)[0];
@@ -228,7 +247,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new float[0];
             var byteCount = count * 4;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             float[] copy = new float[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -236,7 +255,7 @@ namespace Utility.Extensions
 
         public unsafe override ushort ReadUInt16()
         {
-            BaseStream.Read(buffer, 0, 2);
+            ReadIntoBuffer(2);
             fixed (byte* bptr = buffer)
             {
                 return ((ushort*)bptr)[0];
@@ -247,7 +266,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new ushort[0];
             var byteCount = count * 2;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             ushort[] copy = new ushort[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -255,7 +274,7 @@ namespace Utility.Extensions
 
         public unsafe override uint ReadUInt32()
         {
-            BaseStream.Read(buffer, 0, 4);
+            ReadIntoBuffer(4);
             fixed (byte* bptr = buffer)
             {
                 return ((uint*)bptr)[0];
@@ -266,7 +285,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new uint[0];
             var byteCount = count * 4;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             uint[] copy = new uint[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;
@@ -274,7 +293,7 @@ namespace Utility.Extensions
 
         public unsafe override ulong ReadUInt64()
         {
-            BaseStream.Read(buffer, 0, 8);
+            ReadIntoBuffer(8);
             fixed (byte* pBuffer = buffer)
             {
                 return ((ulong*)pBuffer)[0];
@@ -285,7 +304,7 @@ namespace Utility.Extensions
         {
             if (count == 0) return new ulong[0];
             var byteCount = count * 8;
-            BaseStream.Read(buffer, 0, byteCount);
+            ReadIntoBuffer(byteCount);
             ulong[] copy = new ulong[count];
             Buffer.BlockCopy(buffer, 0, copy, 0, byteCount);
             return copy;

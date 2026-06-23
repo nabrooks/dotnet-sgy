@@ -210,7 +210,7 @@ namespace NbApps.Seismic.FileIo.Utility
                     Array.Resize<T[]>(ref _data, blockCount);
                     for (int i = previousBlockCount; i < blockCount - 1; i++)
                     {
-                        _data[previousBlockCount] = new T[_blockSize];
+                        _data[i] = new T[_blockSize];   // was "_data[previousBlockCount]" => only ever filled one block, leaving the rest null
                     }
 
                     _data[blockCount - 1] = new T[lastBlockSize];

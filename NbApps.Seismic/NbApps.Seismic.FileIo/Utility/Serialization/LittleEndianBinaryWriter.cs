@@ -6,11 +6,21 @@ namespace Utility.Extensions
     {
         byte[] buffer = new byte[262144];// new byte[16];
 
+        /// <summary>
+        /// Ensures the scratch <see cref="buffer"/> can hold at least <paramref name="byteCount"/> bytes.
+        /// The original fixed 256 KB buffer silently overran for arrays larger than 65 536 4-byte samples.
+        /// </summary>
+        private void EnsureBuffer(int byteCount)
+        {
+            if (buffer.Length < byteCount) buffer = new byte[byteCount];
+        }
+
         public LittleEndianBinaryWriter(FileStream stream) : base(stream) { }
 
         public unsafe void Write(ulong[] values)
         {
             var byteCount = values.Length * 8;
+            EnsureBuffer(byteCount);
             fixed(ulong* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -22,6 +32,7 @@ namespace Utility.Extensions
         public unsafe void Write(uint[] values)
         {
             var byteCount = values.Length * 4;
+            EnsureBuffer(byteCount);
             fixed (uint* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -33,6 +44,7 @@ namespace Utility.Extensions
         public unsafe void Write(ushort[] values)
         {
             var byteCount = values.Length * 2;
+            EnsureBuffer(byteCount);
             fixed (ushort* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -44,6 +56,7 @@ namespace Utility.Extensions
         public unsafe void Write(short[] values)
         {
             var byteCount = values.Length * 2;
+            EnsureBuffer(byteCount);
             fixed (short* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -55,6 +68,7 @@ namespace Utility.Extensions
         public unsafe void Write(int[] values)
         {
             var byteCount = values.Length * 4;
+            EnsureBuffer(byteCount);
             fixed (int* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -66,6 +80,7 @@ namespace Utility.Extensions
         public unsafe void Write(long[] values)
         {
             var byteCount = values.Length * 8;
+            EnsureBuffer(byteCount);
             fixed (long* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -83,6 +98,7 @@ namespace Utility.Extensions
         public unsafe void Write(float[] values)
         {
             var byteCount = values.Length * 4;
+            EnsureBuffer(byteCount);
             fixed (float* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -94,6 +110,7 @@ namespace Utility.Extensions
         public unsafe void Write(sbyte[] values)
         {
             var byteCount = values.Length;
+            EnsureBuffer(byteCount);
             fixed (sbyte* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -105,6 +122,7 @@ namespace Utility.Extensions
         public unsafe void Write(double[] values)
         {
             var byteCount = values.Length * 8;
+            EnsureBuffer(byteCount);
             fixed (double* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -116,6 +134,7 @@ namespace Utility.Extensions
         public unsafe void Write(decimal[] values)
         {
             var byteCount = values.Length * sizeof(decimal);
+            EnsureBuffer(byteCount);
             fixed (decimal* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -127,6 +146,7 @@ namespace Utility.Extensions
         public unsafe void Write(bool[] values)
         {
             var byteCount = values.Length;
+            EnsureBuffer(byteCount);
             fixed (bool* p = values)
             {
                 for (int i = 0; i < byteCount; i++)
@@ -157,6 +177,7 @@ namespace Utility.Extensions
         public unsafe void WriteIbm(float[] values)
         {
             int n = values.Length;
+            EnsureBuffer(n * 4);
             int fconv;
             int fmant;
             int i;
