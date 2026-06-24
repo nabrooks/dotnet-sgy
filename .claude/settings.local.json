@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet --version)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(dotnet --list-runtimes)",
+      "Bash(dotnet build *)",
+      "Bash(perl -0pi -e 's/BaseStream\\\\.Read\\\\\\(buffer, 0, /ReadIntoBuffer\\(/g' BigEndianBinaryReader.cs LittleEndianBinaryReader.cs)",
+      "Bash(perl -0pi -e 's/using Hess.Seismic.SegyFileIo;/using Hess.Seismic.SegyFileIo;\\\\nusing Seismic.SegyFileIo;/' Program.cs)",
+      "Bash(perl -0pi -e 's/        \\\\/\\\\/ --- Test 2:.*?skipping >65536 case.\\\\\"\\\\\\);\\\\n\\\\n//s' Program.cs)",
+      "Bash(dotnet run *)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git -c user.name=\"Nick Brooks\" -c user.email=\"Nick.brooks@outlook.com\" commit -q -F -)",
+      "Bash(git push *)",
+      "Bash(git branch *)"
+    ]
+  }
+}
